@@ -1,10 +1,11 @@
-const CACHE_NAME = 'papoapp-v1';
+const CACHE_NAME = 'papoapp-v2';
+
 const urlsToCache = [
-    '/',
     '/Papoapp/',
-    '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png'
+    '/Papoapp/index.html',
+    '/Papoapp/manifest.json',
+    '/Papoapp/icons/icon-192.png',
+    '/Papoapp/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
