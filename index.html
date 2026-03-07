@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PapoApp</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0b1419;
+            --header-bg: #202c33;
+            --message-bg: #202c33;
+            --my-message-bg: #005c4b;
+            --text-color: #e9edef;
+            --input-bg: #2a3942;
+            --border-color: #2a3942;
+            --icon-color: #8696a0;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #e5ded8;
+            --header-bg: #f0f2f4;
+            --message-bg: #ffffff;
+            --my-message-bg: #d9fdd3;
+            --text-color: #111b21;
+            --input-bg: #ffffff;
+            --border-color: #e9edef;
+            --icon-color: #54656f;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0b1419;
+            --header-bg: #202c33;
+            --message-bg: #202c33;
+            --my-message-bg: #005c4b;
+            --text-color: #e9edef;
+            --input-bg: #2a3942;
+            --border-color: #2a3942;
+            --icon-color: #8696a0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(45deg, #0b1419 0%, #1f2c33 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 95vh;
+            background: var(--bg-color);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: background-color 0.3s, color 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Header */
+        .chat-header {
+            background: var(--header-bg);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00a884;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-avatar input[type="file"] {
+            display: none;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--icon-color);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .header-actions button {
+            background: none;
+            border: none;
+            color: var(--icon-color);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .header-actions button:hover {
+            color: var(--text-color);
+        }
+
+        /* Settings Menu */
+        .settings-menu {
+            position: absolute;
+            top: 60px;
+            right: 16px;
+            background: var(--header-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            min-width: 200px;
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-menu.show {
+            display: block;
+        }
+
+        .settings-menu h3 {
+            color: var(--text-color);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .theme-option {
+            margin-bottom: 15px;
+        }
+
+        .theme-option label {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 20px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+
+        .theme-btn.active {
+            background: #00a884;
+            color: white;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.selected {
+            border-color: var(--text-color);
+        }
+
+        .bg-image-option {
+            margin-top: 10px;
+        }
+
+        .bg-image-option input[type="file"] {
+            display: none;
+        }
+
+        .bg-image-option label {
+            display: block;
+            padding: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            background: #000;
+            position: relative;
+            display: none;
+        }
+
+        .camera-section.show {
+            display: block;
+        }
+
+        #videoElement {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .camera-controls button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--bg-color);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.received {
+            background: var(--message-bg);
+            color: var(--text-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.sent {
+            background: var(--my-message-bg);
+            color: var(--text-color);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: var(--icon-color);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* Attachment Preview */
+        .attachment-preview {
+            padding: 10px 16px;
+            background: var(--header-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            display: none;
+        }
+
+        .attachment-preview.show {
+            display: flex;
+        }
+
+        .preview-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        .preview-content img, .preview-content video {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 5px;
+        }
+
+        .remove-attachment {
+            background: none;
+            border: none;
+            color: var(--icon-color);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Input Area */
+        .input-area {
+            background: var(--header-bg);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-area button {
+            background: none;
+            border: none;
+            color: var(--icon-color);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .input-area button:hover {
+            color: #00a884;
+        }
+
+        .message-input {
+            flex: 1;
+            background: var(--input-bg);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 15px;
+            color: var(--text-color);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: var(--icon-color);
+        }
+
+        /* File Inputs */
+        .file-input {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+            
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container" id="chatContainer">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="user-info">
+                <div class="user-avatar" id="avatarContainer">
+                    <span id="avatarText">A</span>
+                    <img id="avatarImage" style="display: none;">
+                    <input type="file" id="avatarUpload" accept="image/*">
+                </div>
+                <div class="user-details">
+                    <span class="app-name">PapoApp</span>
+                    <span class="user-status" id="userStatus">online</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="cameraBtn" title="Iniciar Webcam">📹</button>
+                <button id="settingsBtn" title="Configurações">⚙️</button>
+            </div>
+        </div>
+
+        <!-- Settings Menu -->
+        <div class="settings-menu" id="settingsMenu">
+            <h3>Tema</h3>
+            <div class="theme-option">
+                <div class="theme-buttons">
+                    <button class="theme-btn active" data-theme="dark">Escuro</button>
+                    <button class="theme-btn" data-theme="light">Claro</button>
+                </div>
+            </div>
+
+            <h3>Cor de Fundo</h3>
+            <div class="color-options" id="bgColorOptions">
+                <div class="color-btn" style="background: #0b1419;" data-color="#0b1419"></div>
+                <div class="color-btn" style="background: #1a2a33;" data-color="#1a2a33"></div>
+                <div class="color-btn" style="background: #2a3b44;" data-color="#2a3b44"></div>
+                <div class="color-btn" style="background: #3a4c55;" data-color="#3a4c55"></div>
+                <div class="color-btn" style="background: #4a5d66;" data-color="#4a5d66"></div>
+            </div>
+
+            <h3>Imagem de Fundo</h3>
+            <div class="bg-image-option">
+                <input type="file" id="bgImageUpload" accept="image/*">
+                <label for="bgImageUpload">📷 Escolher imagem</label>
+            </div>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="camera-section" id="cameraSection">
+            <video id="videoElement" autoplay playsinline></video>
+            <div class="camera-controls">
+                <button id="closeCameraBtn">✕</button>
+                <button id="capturePhotoBtn">📸</button>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-area" id="messagesArea">
+            <div class="message received">
+                Olá! Tudo bem com você?
+                <div class="message-time">09:41</div>
+            </div>
+            <div class="message sent">
+                Tudo bem, está em casa?
+                <div class="message-time">09:42</div>
+            </div>
+        </div>
+
+        <!-- Attachment Preview -->
+        <div class="attachment-preview" id="attachmentPreview">
+            <div class="preview-content" id="previewContent">
+                <span id="previewText"></span>
+            </div>
+            <button class="remove-attachment" id="removeAttachment">✕</button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <button id="galleryBtn" title="Enviar foto">📷</button>
+            <input type="file" id="galleryInput" class="file-input" accept="image/*,video/*">
+            
+            <button id="fileBtn" title="Anexar arquivo">📎</button>
+            <input type="file" id="fileInput" class="file-input" multiple>
+            
+            <input type="text" class="message-input" id="messageInput" placeholder="Digite uma mensagem">
+            
+            <button id="sendBtn" title="Enviar">📤</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentTheme = 'dark';
+        let stream = null;
+        let currentAttachment = null;
+        let userName = 'Ana';
+        
+        // DOM Elements
+        const chatContainer = document.getElementById('chatContainer');
+        const messagesArea = document.getElementById('messagesArea');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsMenu = document.getElementById('settingsMenu');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const cameraSection = document.getElementById('cameraSection');
+        const videoElement = document.getElementById('videoElement');
+        const closeCameraBtn = document.getElementById('closeCameraBtn');
+        const capturePhotoBtn = document.getElementById('capturePhotoBtn');
+        const avatarContainer = document.getElementById('avatarContainer');
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarImage = document.getElementById('avatarImage');
+        const avatarText = document.getElementById('avatarText');
+        const galleryBtn = document.getElementById('galleryBtn');
+        const galleryInput = document.getElementById('galleryInput');
+        const fileBtn = document.getElementById('fileBtn');
+        const fileInput = document.getElementById('fileInput');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const attachmentPreview = document.getElementById('attachmentPreview');
+        const previewContent = document.getElementById('previewContent');
+        const removeAttachment = document.getElementById('removeAttachment');
+        const bgImageUpload = document.getElementById('bgImageUpload');
+        const bgColorOptions = document.querySelectorAll('.color-btn');
+        const themeBtns = document.querySelectorAll('.theme-btn');
+
+        // Toggle Settings Menu
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsMenu.classList.toggle('show');
+        });
+
+        // Close settings when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!settingsMenu.contains(e.target) && !settingsBtn.contains(e.target)) {
+                settingsMenu.classList.remove('show');
+            }
+        });
+
+        // Theme switching
+        themeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                themeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const theme = btn.getAttribute('data-theme');
+                document.documentElement.setAttribute('data-theme', theme);
+                currentTheme = theme;
+            });
+        });
+
+        // Background color
+        bgColorOptions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                bgColorOptions.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                const color = btn.getAttribute('data-color');
+                messagesArea.style.backgroundColor = color;
+                messagesArea.style.backgroundImage = 'none';
+            });
+        });
+
+        // Background image
+        bgImageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    messagesArea.style.backgroundImage = `url('${e.target.result}')`;
+                    messagesArea.style.backgroundSize = 'cover';
+                    messagesArea.style.backgroundPosition = 'center';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Camera functionality
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                videoElement.srcObject = stream;
+                cameraSection.classList.add('show');
+                settingsMenu.classList.remove('show');
+            } catch (err) {
+                alert('Não foi possível acessar a câmera: ' + err.message);
+            }
+        });
+
+        closeCameraBtn.addEventListener('click', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            cameraSection.classList.remove('show');
+        });
+
+        capturePhotoBtn.addEventListener('click', () => {
+            // Create canvas and capture photo
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+            
+            // Convert to file and send as attachment
+            canvas.toBlob((blob) => {
+                const file = new File([blob], 'webcam-photo.jpg', { type: 'image/jpeg' });
+                handleAttachment(file);
+            }, 'image/jpeg');
+            
+            // Close camera
+            closeCameraBtn.click();
+        });
+
+        // Avatar upload
+        avatarContainer.addEventListener('click', () => {
+            avatarUpload.click();
+        });
+
+        avatarUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    avatarImage.src = e.target.result;
+                    avatarImage.style.display = 'block';
+                    avatarText.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Gallery button
+        galleryBtn.addEventListener('click', () => {
+            galleryInput.click();
+        });
+
+        galleryInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleAttachment(file);
+            }
+        });
+
+        // File button
+        fileBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => handleAttachment(file));
+        });
+
+        // Handle attachment
+        function handleAttachment(file) {
+            currentAttachment = file;
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                previewContent.innerHTML = '';
+                
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContent.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = e.target.result;
+                    video.controls = true;
+                    previewContent.appendChild(video);
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = `📎 ${file.name}`;
+                    previewContent.appendChild(span);
+                }
+                
+                attachmentPreview.classList.add('show');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Remove attachment
+        removeAttachment.addEventListener('click', () => {
+            currentAttachment = null;
+            attachmentPreview.classList.remove('show');
+            galleryInput.value = '';
+            fileInput.value = '';
+        });
+
+        // Send message
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            
+            if (text || currentAttachment) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message sent';
+                
+                if (text) {
+                    messageDiv.textContent = text;
+                }
+                
+                if (currentAttachment) {
+                    const attachmentDiv = document.createElement('div');
+                    if (currentAttachment.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(currentAttachment);
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '200px';
+                        img.style.borderRadius = '8px';
+                        attachmentDiv.appendChild(img);
+                    } else if (currentAttachment.type.startsWith('video/')) {
+                        const video = document.createElement('video');
+                        video.src = URL.createObjectURL(currentAttachment);
+                        video.controls = true;
+                        video.style.maxWidth = '100%';
+                        video.style.maxHeight = '200px';
+                        attachmentDiv.appendChild(video);
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(currentAttachment);
+                        link.download = currentAttachment.name;
+                        link.textContent = `📎 ${currentAttachment.name}`;
+                        attachmentDiv.appendChild(link);
+                    }
+                    
+                    if (text) {
+                        messageDiv.innerHTML = '';
+                        messageDiv.appendChild(document.createTextNode(text));
+                        messageDiv.appendChild(document.createElement('br'));
+                        messageDiv.appendChild(attachmentDiv);
+                    } else {
+                        messageDiv.appendChild(attachmentDiv);
+                    }
+                }
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                messageDiv.appendChild(timeDiv);
+                
+                messagesArea.appendChild(messageDiv);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                
+                // Clear input
+                messageInput.value = '';
+                removeAttachment.click();
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Load initial data
+        function loadInitialMessages() {
+            // You can load messages from localStorage here
+            const savedMessages = localStorage.getItem('papoapp_messages');
+            if (savedMessages) {
+                messagesArea.innerHTML = savedMessages;
+            }
+        }
+
+        // Save messages to localStorage
+        function saveMessages() {
+            localStorage.setItem('papoapp_messages', messagesArea.innerHTML);
+        }
+
+        // Save messages when new message is added
+        const originalSendMessage = sendMessage;
+        sendMessage = function() {
+            originalSendMessage();
+            saveMessages();
+        };
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(registration => {
+                console.log('ServiceWorker registered');
+            }).catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        }
+
+        // Handle user status
+        window.addEventListener('online', () => {
+            document.getElementById('userStatus').textContent = 'online';
+        });
+        
+        window.addEventListener('offline', () => {
+            document.getElementById('userStatus').textContent = 'offline';
+        });
+    </script>
+</body>
+</html>
