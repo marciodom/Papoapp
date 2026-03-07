@@ -2,7 +2,7 @@
     "name": "PapoApp Mensseger",
     "short_name": "PapoApp",
     "description": "Aplicativo de chat com suporte a webcam ao vivo",
-    "start_url": "/papoapp/",
+    "start_url": "/Papoapp/",
     "display": "standalone",
     "background_color": "#0b1419",
     "theme_color": "#202c33",

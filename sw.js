@@ -1,7 +1,7 @@
 const CACHE_NAME = 'papoapp-v1';
 const urlsToCache = [
     '/',
-    '/papoapp/',
+    '/Papoapp/',
     '/manifest.json',
     '/icons/icon-192.png',
     '/icons/icon-512.png'
