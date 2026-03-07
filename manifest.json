@@ -1,22 +1,29 @@
 {
-    "name": "PapoApp Messenger",
-    "short_name": "PapoApp",
-    "description": "Aplicativo de chat com suporte a webcam ao vivo",
-    "start_url": "/Papoapp/",
-    "scope": "/Papoapp/",
-    "display": "standalone",
-    "background_color": "#0b1419",
-    "theme_color": "#202c33",
-    "icons": [
-        {
-            "src": "/Papoapp/icons/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/Papoapp/icons/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+  "name": "PapoApp Messenger",
+  "short_name": "PapoApp",
+  "description": "Aplicativo de chat com suporte a webcam ao vivo",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1419",
+  "theme_color": "#202c33",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
