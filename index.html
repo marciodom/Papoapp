@@ -209,6 +209,31 @@
             display: none;
         }
 
+        /* BOTÃO DE LIMPAR MENSAGENS - NOVO */
+        .clear-chat-btn {
+            width: 100%;
+            padding: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .clear-chat-btn:hover {
+            background: #ff6666;
+        }
+
+        .clear-chat-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .camera-section {
             background: #000;
             position: relative;
@@ -434,6 +459,11 @@
                 <input type="file" id="bgImageUpload" accept="image/*">
                 <label for="bgImageUpload">📷 Escolher imagem</label>
             </div>
+
+            <!-- BOTÃO DE LIMPAR MENSAGENS ADICIONADO AQUI -->
+            <button class="clear-chat-btn" id="clearChatBtn">
+                🗑️ LIMPAR TODAS AS MENSAGENS
+            </button>
         </div>
 
         <!-- Camera Section -->
@@ -518,7 +548,8 @@
                 bgImageUpload: document.getElementById('bgImageUpload'),
                 bgColorOptions: document.querySelectorAll('.color-btn'),
                 themeBtns: document.querySelectorAll('.theme-btn'),
-                userStatus: document.getElementById('userStatus')
+                userStatus: document.getElementById('userStatus'),
+                clearChatBtn: document.getElementById('clearChatBtn') // NOVO
             };
             
             // ATUALIZA AVATAR INICIAL
@@ -530,7 +561,6 @@
             
             // Adiciona mensagem à interface
             function addMessageToUI(msg) {
-                // CORRIGIDO: msg.user -> msg.username
                 const messageDiv = document.createElement('div');
                 messageDiv.className = msg.username === userName ? 'message sent' : 'message received';
                 
@@ -583,6 +613,57 @@
                 }
             }
             
+            // FUNÇÃO PARA LIMPAR MENSAGENS - NOVA
+            async function limparTodasMensagens() {
+                if (!elements.clearChatBtn) return;
+                
+                // Confirmação
+                if (!confirm('⚠️ TEM CERTEZA? Isso vai apagar TODAS as mensagens para TODOS os usuários!')) {
+                    return;
+                }
+                
+                try {
+                    // Desabilitar botão e mostrar feedback
+                    elements.clearChatBtn.disabled = true;
+                    elements.clearChatBtn.textContent = '🔄 APAGANDO...';
+                    
+                    console.log("🗑️ Apagando todas as mensagens...");
+                    
+                    // Buscar todos os IDs das mensagens
+                    const { data: messages, error: fetchError } = await supabase
+                        .from("messenge")
+                        .select("id");
+                    
+                    if (fetchError) throw fetchError;
+                    
+                    if (messages && messages.length > 0) {
+                        // Apagar mensagens uma por uma (devido a limitações do Supabase grátis)
+                        for (const msg of messages) {
+                            const { error: deleteError } = await supabase
+                                .from("messenge")
+                                .delete()
+                                .eq("id", msg.id);
+                            
+                            if (deleteError) console.error("Erro ao apagar ID", msg.id, deleteError);
+                        }
+                    }
+                    
+                    // Limpar a interface
+                    elements.messagesArea.innerHTML = '';
+                    
+                    console.log("✅ Todas as mensagens apagadas!");
+                    alert('✅ Todas as mensagens foram apagadas com sucesso!');
+                    
+                } catch (error) {
+                    console.error("❌ Erro ao limpar mensagens:", error);
+                    alert('❌ Erro ao apagar mensagens: ' + error.message);
+                } finally {
+                    // Reabilitar botão
+                    elements.clearChatBtn.disabled = false;
+                    elements.clearChatBtn.textContent = '🗑️ LIMPAR TODAS AS MENSAGENS';
+                }
+            }
+            
             // Upload de arquivo para o Storage
             async function uploadFile(file) {
                 try {
@@ -628,7 +709,7 @@
                 try {
                     const messageData = {
                         message: texto,
-                        username: userName  // CORRIGIDO: user -> username
+                        username: userName
                     };
                     
                     if (attachmentData) {
@@ -675,6 +756,11 @@
                     elements.settingsMenu.classList.remove('show');
                 }
             });
+            
+            // EVENTO DO BOTÃO LIMPAR MENSAGENS - NOVO
+            if (elements.clearChatBtn) {
+                elements.clearChatBtn.addEventListener('click', limparTodasMensagens);
+            }
             
             // Tema
             elements.themeBtns.forEach(btn => {
@@ -903,6 +989,13 @@
                     (payload) => {
                         console.log("📨 Nova mensagem:", payload.new);
                         addMessageToUI(payload.new);
+                    }
+                )
+                .on('postgres_changes',
+                    { event: 'DELETE', schema: 'public', table: 'messenge' },
+                    () => {
+                        console.log("🗑️ Mensagem deletada, recarregando...");
+                        carregarMensagens();
                     }
                 )
                 .subscribe();
