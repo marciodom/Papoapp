@@ -209,7 +209,7 @@
             display: none;
         }
 
-        /* BOTÃO DE LIMPAR MENSAGENS - NOVO */
+        /* BOTÃO DE LIMPAR MENSAGENS */
         .clear-chat-btn {
             width: 100%;
             padding: 10px;
@@ -460,7 +460,7 @@
                 <label for="bgImageUpload">📷 Escolher imagem</label>
             </div>
 
-            <!-- BOTÃO DE LIMPAR MENSAGENS ADICIONADO AQUI -->
+            <!-- BOTÃO DE LIMPAR MENSAGENS -->
             <button class="clear-chat-btn" id="clearChatBtn">
                 🗑️ LIMPAR TODAS AS MENSAGENS
             </button>
@@ -549,7 +549,7 @@
                 bgColorOptions: document.querySelectorAll('.color-btn'),
                 themeBtns: document.querySelectorAll('.theme-btn'),
                 userStatus: document.getElementById('userStatus'),
-                clearChatBtn: document.getElementById('clearChatBtn') // NOVO
+                clearChatBtn: document.getElementById('clearChatBtn')
             };
             
             // ATUALIZA AVATAR INICIAL
@@ -591,7 +591,7 @@
                 elements.messagesArea.scrollTop = elements.messagesArea.scrollHeight;
             }
             
-            // Carrega mensagens do banco
+            // Carrega mensagens do banco - SEM MENSAGEM DE FUNDO
             async function carregarMensagens() {
                 try {
                     const { data, error } = await supabase
@@ -605,60 +605,48 @@
                     }
                     
                     elements.messagesArea.innerHTML = '';
-                    data.forEach(msg => addMessageToUI(msg));
-                    console.log(`📨 ${data.length} mensagens carregadas`);
+                    if (data && data.length > 0) {
+                        data.forEach(msg => addMessageToUI(msg));
+                    }
+                    // NÃO adiciona nenhuma mensagem quando vazio
+                    
+                    console.log(`📨 ${data?.length || 0} mensagens carregadas`);
                     
                 } catch (error) {
                     console.error("Erro:", error);
                 }
             }
             
-            // FUNÇÃO PARA LIMPAR MENSAGENS - NOVA
+            // FUNÇÃO PARA LIMPAR MENSAGENS
             async function limparTodasMensagens() {
                 if (!elements.clearChatBtn) return;
                 
-                // Confirmação
                 if (!confirm('⚠️ TEM CERTEZA? Isso vai apagar TODAS as mensagens para TODOS os usuários!')) {
                     return;
                 }
                 
                 try {
-                    // Desabilitar botão e mostrar feedback
                     elements.clearChatBtn.disabled = true;
                     elements.clearChatBtn.textContent = '🔄 APAGANDO...';
                     
                     console.log("🗑️ Apagando todas as mensagens...");
                     
-                    // Buscar todos os IDs das mensagens
-                    const { data: messages, error: fetchError } = await supabase
+                    const { error } = await supabase
                         .from("messenge")
-                        .select("id");
+                        .delete()
+                        .neq("id", 0);
                     
-                    if (fetchError) throw fetchError;
+                    if (error) throw error;
                     
-                    if (messages && messages.length > 0) {
-                        // Apagar mensagens uma por uma (devido a limitações do Supabase grátis)
-                        for (const msg of messages) {
-                            const { error: deleteError } = await supabase
-                                .from("messenge")
-                                .delete()
-                                .eq("id", msg.id);
-                            
-                            if (deleteError) console.error("Erro ao apagar ID", msg.id, deleteError);
-                        }
-                    }
-                    
-                    // Limpar a interface
                     elements.messagesArea.innerHTML = '';
                     
-                    console.log("✅ Todas as mensagens apagadas!");
+                    console.log("✅ Todas as mensagens apagadas com sucesso!");
                     alert('✅ Todas as mensagens foram apagadas com sucesso!');
                     
                 } catch (error) {
                     console.error("❌ Erro ao limpar mensagens:", error);
-                    alert('❌ Erro ao apagar mensagens: ' + error.message);
+                    alert('❌ Erro: ' + error.message);
                 } finally {
-                    // Reabilitar botão
                     elements.clearChatBtn.disabled = false;
                     elements.clearChatBtn.textContent = '🗑️ LIMPAR TODAS AS MENSAGENS';
                 }
@@ -718,8 +706,6 @@
                         messageData.attachment_name = attachmentData.name;
                     }
                     
-                    console.log("Enviando dados:", messageData);
-                    
                     const { error } = await supabase
                         .from("messenge")
                         .insert([messageData]);
@@ -730,7 +716,6 @@
                         return false;
                     }
                     
-                    console.log("Mensagem enviada com sucesso!");
                     return true;
                     
                 } catch (error) {
@@ -742,7 +727,6 @@
             
             // ========== CONFIGURAÇÃO DOS EVENTOS ==========
             
-            // Menu de configurações
             if (elements.settingsBtn) {
                 elements.settingsBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -757,12 +741,10 @@
                 }
             });
             
-            // EVENTO DO BOTÃO LIMPAR MENSAGENS - NOVO
             if (elements.clearChatBtn) {
                 elements.clearChatBtn.addEventListener('click', limparTodasMensagens);
             }
             
-            // Tema
             elements.themeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     elements.themeBtns.forEach(b => b.classList.remove('active'));
@@ -773,7 +755,6 @@
                 });
             });
             
-            // Cor de fundo
             elements.bgColorOptions.forEach(btn => {
                 btn.addEventListener('click', () => {
                     elements.bgColorOptions.forEach(b => b.classList.remove('selected'));
@@ -785,7 +766,6 @@
                 });
             });
             
-            // Imagem de fundo
             if (elements.bgImageUpload) {
                 elements.bgImageUpload.addEventListener('change', (e) => {
                     const file = e.target.files[0];
@@ -802,7 +782,6 @@
                 });
             }
             
-            // Câmera
             if (elements.cameraBtn) {
                 elements.cameraBtn.addEventListener('click', async () => {
                     try {
@@ -848,7 +827,6 @@
                 });
             }
             
-            // Avatar
             if (elements.avatarContainer) {
                 elements.avatarContainer.addEventListener('click', () => {
                     elements.avatarUpload.click();
@@ -871,7 +849,6 @@
                 });
             }
             
-            // Galeria
             if (elements.galleryBtn) {
                 elements.galleryBtn.addEventListener('click', () => {
                     elements.galleryInput.click();
@@ -893,7 +870,6 @@
                 });
             }
             
-            // Arquivo
             if (elements.fileBtn) {
                 elements.fileBtn.addEventListener('click', () => {
                     elements.fileInput.click();
@@ -911,7 +887,6 @@
                 });
             }
             
-            // Remover anexo
             if (elements.removeAttachment) {
                 elements.removeAttachment.addEventListener('click', () => {
                     currentAttachment = null;
@@ -922,7 +897,6 @@
                 });
             }
             
-            // Botão enviar
             if (elements.sendBtn) {
                 elements.sendBtn.addEventListener('click', async () => {
                     const text = elements.messageInput.value.trim();
@@ -960,7 +934,6 @@
                 });
             }
             
-            // Enter no input
             if (elements.messageInput) {
                 elements.messageInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -972,7 +945,6 @@
                 });
             }
             
-            // Status online/offline
             window.addEventListener('online', () => {
                 if (elements.userStatus) elements.userStatus.textContent = 'online';
             });
@@ -1002,7 +974,6 @@
             
             // ========== CARREGAR CONFIGURAÇÕES SALVAS ==========
             
-            // Tema salvo
             const savedTheme = localStorage.getItem('papoapp_theme');
             if (savedTheme) {
                 document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1015,7 +986,6 @@
                 });
             }
             
-            // Cor de fundo salva
             const savedColor = localStorage.getItem('papoapp_bg_color');
             if (savedColor) {
                 elements.messagesArea.style.backgroundColor = savedColor;
@@ -1026,7 +996,6 @@
                 });
             }
             
-            // Imagem de fundo salva
             const savedImage = localStorage.getItem('papoapp_bg_image');
             if (savedImage) {
                 elements.messagesArea.style.backgroundImage = `url('${savedImage}')`;
@@ -1034,7 +1003,6 @@
                 elements.messagesArea.style.backgroundPosition = 'center';
             }
             
-            // Avatar salvo
             const savedAvatar = localStorage.getItem('papoapp_avatar');
             if (savedAvatar && elements.avatarImage && elements.avatarText) {
                 elements.avatarImage.src = savedAvatar;
@@ -1042,45 +1010,35 @@
                 elements.avatarText.style.display = 'none';
             }
             
+            // ========== SERVICE WORKER - REGISTRO CORRETO ==========
+            if ('serviceWorker' in navigator) {
+                console.log('📦 Registrando Service Worker...');
+                
+                navigator.serviceWorker.register('/Papoapp/sw.js', { 
+                    scope: '/Papoapp/' 
+                })
+                .then(function(registration) {
+                    console.log('✅ Service Worker registrado!', registration.scope);
+                    
+                    registration.addEventListener('updatefound', function() {
+                        console.log('🔄 Nova versão do SW encontrada');
+                    });
+                })
+                .catch(function(error) {
+                    console.log('❌ Falha no registro:', error);
+                });
+                
+                navigator.serviceWorker.ready.then(function(registration) {
+                    console.log('✅ Service Worker está ativo e pronto!');
+                });
+            } else {
+                console.log('ℹ️ Service Worker não suportado');
+            }
+            
             // ========== INICIAR ==========
             carregarMensagens();
             console.log(`✅ App iniciado com usuário: ${userName}`);
         })();
     </script>
- 
- <script>
-  // Registro ÚNICO e CORRETO do Service Worker
-  (function() {
-    if ('serviceWorker' in navigator) {
-      // Garante que o DOM carregou primeiro
-      window.addEventListener('load', function() {
-        console.log('📦 Tentando registrar Service Worker...');
-        
-        navigator.serviceWorker.register('/Papoapp/sw.js', { 
-          scope: '/Papoapp/' 
-        })
-        .then(function(registration) {
-          console.log('✅ Service Worker registrado!', registration.scope);
-          
-          // Verifica se há atualização
-          registration.addEventListener('updatefound', function() {
-            console.log('🔄 Nova versão do SW encontrada');
-          });
-        })
-        .catch(function(error) {
-          console.log('❌ Falha no registro:', error);
-        });
-        
-        // Verifica se já tem SW ativo
-        navigator.serviceWorker.ready.then(function(registration) {
-          console.log('✅ Service Worker está ativo e pronto!');
-        });
-      });
-    } else {
-      console.log('ℹ️ Service Worker não suportado');
-    }
-  })();
-</script>
- 
 </body>
 </html>
