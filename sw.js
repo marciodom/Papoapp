@@ -1,4 +1,4 @@
-const CACHE_NAME = 'papoapp-v4';
+const CACHE_NAME = 'papoapp-v5';
 
 const urlsToCache = [
   '/Papoapp/',
