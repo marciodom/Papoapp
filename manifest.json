@@ -2,19 +2,15 @@
   "id": "/Papoapp/",
   "name": "PapoApp Messenger",
   "short_name": "PapoApp",
-  "description": "Aplicativo de chat com suporte a webcam ao vivo",
+  "description": "Chat em tempo real com webcam e anexos",
   "start_url": "/Papoapp/",
   "scope": "/Papoapp/",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "pt-BR",
   "background_color": "#0b1419",
-  "theme_color": "#202c33",
-  "categories": [
-    "communication",
-    "social",
-    "productivity"
-  ],
+  "theme_color": "#00a884",
+  "categories": ["communication", "social"],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -28,14 +24,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Tela principal do PapoApp"
-    }
- ]
+  ]
 }

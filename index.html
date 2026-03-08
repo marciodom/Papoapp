@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PapoApp</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    
+    <title>PapoApp - Chat Completo</title>
+    <!-- Favicon básico -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    
     <style>
         * {
             margin: 0;
@@ -35,17 +37,6 @@
             --icon-color: #54656f;
         }
 
-        [data-theme="dark"] {
-            --bg-color: #0b1419;
-            --header-bg: #202c33;
-            --message-bg: #202c33;
-            --my-message-bg: #005c4b;
-            --text-color: #e9edef;
-            --input-bg: #2a3942;
-            --border-color: #2a3942;
-            --icon-color: #8696a0;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(45deg, #0b1419 0%, #1f2c33 100%);
@@ -68,11 +59,9 @@
             flex-direction: column;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             position: relative;
-            transition: background-color 0.3s, color 0.3s;
             border: 1px solid var(--border-color);
         }
 
-        /* Header */
         .chat-header {
             background: var(--header-bg);
             padding: 10px 16px;
@@ -110,13 +99,8 @@
             object-fit: cover;
         }
 
-        .user-avatar input[type="file"] {
+        .user-avatar input {
             display: none;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
         }
 
         .app-name {
@@ -133,7 +117,6 @@
         .header-actions {
             display: flex;
             gap: 20px;
-            align-items: center;
         }
 
         .header-actions button {
@@ -143,17 +126,8 @@
             font-size: 22px;
             cursor: pointer;
             padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
         }
 
-        .header-actions button:hover {
-            color: var(--text-color);
-        }
-
-        /* Settings Menu */
         .settings-menu {
             position: absolute;
             top: 60px;
@@ -178,20 +152,10 @@
             font-size: 14px;
         }
 
-        .theme-option {
-            margin-bottom: 15px;
-        }
-
-        .theme-option label {
-            display: block;
-            color: var(--text-color);
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
         .theme-buttons {
             display: flex;
             gap: 8px;
+            margin-bottom: 15px;
         }
 
         .theme-btn {
@@ -203,7 +167,6 @@
             color: var(--text-color);
             cursor: pointer;
             font-size: 12px;
-            transition: opacity 0.2s;
         }
 
         .theme-btn.active {
@@ -215,6 +178,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            margin-bottom: 15px;
         }
 
         .color-btn {
@@ -223,23 +187,10 @@
             border-radius: 50%;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .color-btn:hover {
-            transform: scale(1.1);
         }
 
         .color-btn.selected {
             border-color: var(--text-color);
-        }
-
-        .bg-image-option {
-            margin-top: 10px;
-        }
-
-        .bg-image-option input[type="file"] {
-            display: none;
         }
 
         .bg-image-option label {
@@ -251,9 +202,13 @@
             text-align: center;
             cursor: pointer;
             font-size: 13px;
+            margin-top: 10px;
         }
 
-        /* Camera Section */
+        .bg-image-option input {
+            display: none;
+        }
+
         .camera-section {
             background: #000;
             position: relative;
@@ -289,10 +244,8 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
-            backdrop-filter: blur(5px);
         }
 
-        /* Messages Area */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -311,6 +264,12 @@
             border-radius: 12px;
             position: relative;
             word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.received {
@@ -334,7 +293,20 @@
             text-align: right;
         }
 
-        /* Attachment Preview */
+        .message img, .message video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .message a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            margin-top: 5px;
+        }
+
         .attachment-preview {
             padding: 10px 16px;
             background: var(--header-bg);
@@ -370,7 +342,6 @@
             cursor: pointer;
         }
 
-        /* Input Area */
         .input-area {
             background: var(--header-bg);
             padding: 10px 16px;
@@ -386,15 +357,12 @@
             color: var(--icon-color);
             font-size: 24px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 5px;
-            transition: color 0.2s;
         }
 
-        .input-area button:hover {
-            color: #00a884;
+        .input-area button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .message-input {
@@ -408,36 +376,28 @@
             outline: none;
         }
 
-        .message-input::placeholder {
-            color: var(--icon-color);
-        }
-
-        /* File Inputs */
         .file-input {
             display: none;
         }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            body {
-                padding: 0;
-            }
-            
-            .chat-container {
-                height: 100vh;
-                border-radius: 0;
-                max-width: 100%;
-            }
+        .upload-progress {
+            height: 3px;
+            background: #00a884;
+            width: 0%;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
         }
     </style>
 </head>
 <body>
-    <div class="chat-container" id="chatContainer">
+    <div class="chat-container">
         <!-- Header -->
         <div class="chat-header">
             <div class="user-info">
                 <div class="user-avatar" id="avatarContainer">
-                    <span id="avatarText">A</span>
+                    <span id="avatarText">?</span>
                     <img id="avatarImage" style="display: none;">
                     <input type="file" id="avatarUpload" accept="image/*">
                 </div>
@@ -447,19 +407,17 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button id="cameraBtn" title="Iniciar Webcam">📹</button>
-                <button id="settingsBtn" title="Configurações">⚙️</button>
+                <button id="cameraBtn">📹</button>
+                <button id="settingsBtn">⚙️</button>
             </div>
         </div>
 
         <!-- Settings Menu -->
         <div class="settings-menu" id="settingsMenu">
             <h3>Tema</h3>
-            <div class="theme-option">
-                <div class="theme-buttons">
-                    <button class="theme-btn active" data-theme="dark">Escuro</button>
-                    <button class="theme-btn" data-theme="light">Claro</button>
-                </div>
+            <div class="theme-buttons">
+                <button class="theme-btn active" data-theme="dark">Escuro</button>
+                <button class="theme-btn" data-theme="light">Claro</button>
             </div>
 
             <h3>Cor de Fundo</h3>
@@ -487,334 +445,549 @@
             </div>
         </div>
           
-<!-- Messages Area -->
-<div class="messages-area" id="messagesArea">
-    <div class="loading" id="loadingMessages">Carregando mensagens...</div>
-</div>
+        <!-- Messages Area -->
+        <div class="messages-area" id="messagesArea"></div>
+
         <!-- Attachment Preview -->
         <div class="attachment-preview" id="attachmentPreview">
-            <div class="preview-content" id="previewContent">
-                <span id="previewText"></span>
-            </div>
+            <div class="preview-content" id="previewContent"></div>
             <button class="remove-attachment" id="removeAttachment">✕</button>
+            <div class="upload-progress" id="uploadProgress"></div>
         </div>
 
         <!-- Input Area -->
         <div class="input-area">
-            <button id="galleryBtn" title="Enviar foto">📷</button>
+            <button id="galleryBtn">📷</button>
             <input type="file" id="galleryInput" class="file-input" accept="image/*,video/*">
             
-            <button id="fileBtn" title="Anexar arquivo">📎</button>
+            <button id="fileBtn">📎</button>
             <input type="file" id="fileInput" class="file-input" multiple>
             
             <input type="text" class="message-input" id="messageInput" placeholder="Digite uma mensagem">
-            
-            <button id="sendBtn" title="Enviar">📤</button>
+            <button id="sendBtn">📤</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-        // State
-        let currentTheme = 'dark';
-        let stream = null;
-        let currentAttachment = null;
-        let userName = 'Ana';
-        
-        // DOM Elements
-        const chatContainer = document.getElementById('chatContainer');
-        const messagesArea = document.getElementById('messagesArea');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsMenu = document.getElementById('settingsMenu');
-        const cameraBtn = document.getElementById('cameraBtn');
-        const cameraSection = document.getElementById('cameraSection');
-        const videoElement = document.getElementById('videoElement');
-        const closeCameraBtn = document.getElementById('closeCameraBtn');
-        const capturePhotoBtn = document.getElementById('capturePhotoBtn');
-        const avatarContainer = document.getElementById('avatarContainer');
-        const avatarUpload = document.getElementById('avatarUpload');
-        const avatarImage = document.getElementById('avatarImage');
-        const avatarText = document.getElementById('avatarText');
-        const galleryBtn = document.getElementById('galleryBtn');
-        const galleryInput = document.getElementById('galleryInput');
-        const fileBtn = document.getElementById('fileBtn');
-        const fileInput = document.getElementById('fileInput');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const attachmentPreview = document.getElementById('attachmentPreview');
-        const previewContent = document.getElementById('previewContent');
-        const removeAttachment = document.getElementById('removeAttachment');
-        const bgImageUpload = document.getElementById('bgImageUpload');
-        const bgColorOptions = document.querySelectorAll('.color-btn');
-        const themeBtns = document.querySelectorAll('.theme-btn');
-
-        // Toggle Settings Menu
-        settingsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            settingsMenu.classList.toggle('show');
-        });
-
-        // Close settings when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!settingsMenu.contains(e.target) && !settingsBtn.contains(e.target)) {
-                settingsMenu.classList.remove('show');
-            }
-        });
-
-        // Theme switching
-        themeBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                themeBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const theme = btn.getAttribute('data-theme');
-                document.documentElement.setAttribute('data-theme', theme);
-                currentTheme = theme;
-            });
-        });
-
-        // Background color
-        bgColorOptions.forEach(btn => {
-            btn.addEventListener('click', () => {
-                bgColorOptions.forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                const color = btn.getAttribute('data-color');
-                messagesArea.style.backgroundColor = color;
-                messagesArea.style.backgroundImage = 'none';
-            });
-        });
-
-        // Background image
-        bgImageUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    messagesArea.style.backgroundImage = `url('${e.target.result}')`;
-                    messagesArea.style.backgroundSize = 'cover';
-                    messagesArea.style.backgroundPosition = 'center';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Camera functionality
-        cameraBtn.addEventListener('click', async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                videoElement.srcObject = stream;
-                cameraSection.classList.add('show');
-                settingsMenu.classList.remove('show');
-            } catch (err) {
-                alert('Não foi possível acessar a câmera: ' + err.message);
-            }
-        });
-
-        closeCameraBtn.addEventListener('click', () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            cameraSection.classList.remove('show');
-        });
-
-        capturePhotoBtn.addEventListener('click', () => {
-            // Create canvas and capture photo
-            const canvas = document.createElement('canvas');
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
-            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+        (function() {
+            console.log("🚀 Iniciando PapoApp...");
             
-            // Convert to file and send as attachment
-            canvas.toBlob((blob) => {
-                const file = new File([blob], 'webcam-photo.jpg', { type: 'image/jpeg' });
-                handleAttachment(file);
-            }, 'image/jpeg');
+            // CONFIGURAÇÃO SUPABASE
+            const SUPABASE_URL = "https://nxicvaqqdynwicbpqdkf.supabase.co";
+            const SUPABASE_ANON_KEY = "sb_publishable_3YDpcG6o8hMzmWeq0nOt_A_cZ00Zfc7";
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
-            // Close camera
-            closeCameraBtn.click();
-        });
-
-        // Avatar upload
-        avatarContainer.addEventListener('click', () => {
-            avatarUpload.click();
-        });
-
-        avatarUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    avatarImage.src = e.target.result;
-                    avatarImage.style.display = 'block';
-                    avatarText.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
+            // USUÁRIO (persistente)
+            let userName = localStorage.getItem("papoapp_user");
+            if (!userName) {
+                const names = ["Ana", "João", "Maria", "Pedro", "Lucas", "Carla", "Paulo", "Sofia"];
+                userName = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 1000);
+                localStorage.setItem("papoapp_user", userName);
             }
-        });
-
-        // Gallery button
-        galleryBtn.addEventListener('click', () => {
-            galleryInput.click();
-        });
-
-        galleryInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                handleAttachment(file);
-            }
-        });
-
-        // File button
-        fileBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            files.forEach(file => handleAttachment(file));
-        });
-
-        // Handle attachment
-        function handleAttachment(file) {
-            currentAttachment = file;
-            const reader = new FileReader();
             
-            reader.onload = (e) => {
-                previewContent.innerHTML = '';
-                
-                if (file.type.startsWith('image/')) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    previewContent.appendChild(img);
-                } else if (file.type.startsWith('video/')) {
-                    const video = document.createElement('video');
-                    video.src = e.target.result;
-                    video.controls = true;
-                    previewContent.appendChild(video);
-                } else {
-                    const span = document.createElement('span');
-                    span.textContent = `📎 ${file.name}`;
-                    previewContent.appendChild(span);
-                }
-                
-                attachmentPreview.classList.add('show');
+            // ESTADO GLOBAL
+            let currentAttachment = null;
+            let stream = null;
+            
+            // ELEMENTOS DOM
+            const elements = {
+                messagesArea: document.getElementById('messagesArea'),
+                settingsBtn: document.getElementById('settingsBtn'),
+                settingsMenu: document.getElementById('settingsMenu'),
+                cameraBtn: document.getElementById('cameraBtn'),
+                cameraSection: document.getElementById('cameraSection'),
+                videoElement: document.getElementById('videoElement'),
+                closeCameraBtn: document.getElementById('closeCameraBtn'),
+                capturePhotoBtn: document.getElementById('capturePhotoBtn'),
+                avatarContainer: document.getElementById('avatarContainer'),
+                avatarUpload: document.getElementById('avatarUpload'),
+                avatarImage: document.getElementById('avatarImage'),
+                avatarText: document.getElementById('avatarText'),
+                galleryBtn: document.getElementById('galleryBtn'),
+                galleryInput: document.getElementById('galleryInput'),
+                fileBtn: document.getElementById('fileBtn'),
+                fileInput: document.getElementById('fileInput'),
+                messageInput: document.getElementById('messageInput'),
+                sendBtn: document.getElementById('sendBtn'),
+                attachmentPreview: document.getElementById('attachmentPreview'),
+                previewContent: document.getElementById('previewContent'),
+                removeAttachment: document.getElementById('removeAttachment'),
+                uploadProgress: document.getElementById('uploadProgress'),
+                bgImageUpload: document.getElementById('bgImageUpload'),
+                bgColorOptions: document.querySelectorAll('.color-btn'),
+                themeBtns: document.querySelectorAll('.theme-btn'),
+                userStatus: document.getElementById('userStatus')
             };
             
-            reader.readAsDataURL(file);
-        }
-
-        // Remove attachment
-        removeAttachment.addEventListener('click', () => {
-            currentAttachment = null;
-            attachmentPreview.classList.remove('show');
-            galleryInput.value = '';
-            fileInput.value = '';
-        });
-
-        // Send message
-        function sendMessage() {
-            const text = messageInput.value.trim();
+            // ATUALIZA AVATAR INICIAL
+            if (elements.avatarText) {
+                elements.avatarText.textContent = userName.charAt(0).toUpperCase();
+            }
             
-            if (text || currentAttachment) {
+            // ========== FUNÇÕES PRINCIPAIS ==========
+            
+            // Adiciona mensagem à interface
+            function addMessageToUI(msg) {
+                // CORRIGIDO: msg.user -> msg.username
                 const messageDiv = document.createElement('div');
-                messageDiv.className = 'message sent';
+                messageDiv.className = msg.username === userName ? 'message sent' : 'message received';
                 
-                if (text) {
-                    messageDiv.textContent = text;
+                let content = '';
+                if (msg.message) {
+                    content += msg.message;
                 }
                 
-                if (currentAttachment) {
-                    const attachmentDiv = document.createElement('div');
-                    if (currentAttachment.type.startsWith('image/')) {
-                        const img = document.createElement('img');
-                        img.src = URL.createObjectURL(currentAttachment);
-                        img.style.maxWidth = '100%';
-                        img.style.maxHeight = '200px';
-                        img.style.borderRadius = '8px';
-                        attachmentDiv.appendChild(img);
-                    } else if (currentAttachment.type.startsWith('video/')) {
-                        const video = document.createElement('video');
-                        video.src = URL.createObjectURL(currentAttachment);
-                        video.controls = true;
-                        video.style.maxWidth = '100%';
-                        video.style.maxHeight = '200px';
-                        attachmentDiv.appendChild(video);
+                if (msg.attachment_url) {
+                    const url = msg.attachment_url;
+                    if (msg.attachment_type?.startsWith('image/')) {
+                        content += `<br><img src="${url}" style="max-width:100%; max-height:200px; border-radius:8px;">`;
+                    } else if (msg.attachment_type?.startsWith('video/')) {
+                        content += `<br><video src="${url}" controls style="max-width:100%; max-height:200px;"></video>`;
                     } else {
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(currentAttachment);
-                        link.download = currentAttachment.name;
-                        link.textContent = `📎 ${currentAttachment.name}`;
-                        attachmentDiv.appendChild(link);
-                    }
-                    
-                    if (text) {
-                        messageDiv.innerHTML = '';
-                        messageDiv.appendChild(document.createTextNode(text));
-                        messageDiv.appendChild(document.createElement('br'));
-                        messageDiv.appendChild(attachmentDiv);
-                    } else {
-                        messageDiv.appendChild(attachmentDiv);
+                        content += `<br><a href="${url}" target="_blank" style="color: var(--text-color);">📎 ${msg.attachment_name || 'Anexo'}</a>`;
                     }
                 }
+                
+                messageDiv.innerHTML = content;
                 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'message-time';
-                timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                timeDiv.textContent = msg.created_at ? new Date(msg.created_at).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) : 'Agora';
                 messageDiv.appendChild(timeDiv);
                 
-                messagesArea.appendChild(messageDiv);
-                messagesArea.scrollTop = messagesArea.scrollHeight;
-                
-                // Clear input
-                messageInput.value = '';
-                removeAttachment.click();
+                elements.messagesArea.appendChild(messageDiv);
+                elements.messagesArea.scrollTop = elements.messagesArea.scrollHeight;
             }
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
+            
+            // Carrega mensagens do banco
+            async function carregarMensagens() {
+                try {
+                    const { data, error } = await supabase
+                        .from("messenge")
+                        .select("*")
+                        .order("id", { ascending: true });
+                    
+                    if (error) {
+                        console.error("Erro ao carregar:", error);
+                        return;
+                    }
+                    
+                    elements.messagesArea.innerHTML = '';
+                    data.forEach(msg => addMessageToUI(msg));
+                    console.log(`📨 ${data.length} mensagens carregadas`);
+                    
+                } catch (error) {
+                    console.error("Erro:", error);
+                }
             }
-        });
-
-        // Load initial data
-        function loadInitialMessages() {
-            // You can load messages from localStorage here
-            const savedMessages = localStorage.getItem('papoapp_messages');
-            if (savedMessages) {
-                messagesArea.innerHTML = savedMessages;
+            
+            // Upload de arquivo para o Storage
+            async function uploadFile(file) {
+                try {
+                    if (elements.uploadProgress) {
+                        elements.uploadProgress.style.width = '0%';
+                    }
+                    
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${userName}/${Date.now()}.${fileExt}`;
+                    
+                    const { error } = await supabase.storage
+                        .from('chat-attachments')
+                        .upload(fileName, file);
+                    
+                    if (error) throw error;
+                    
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('chat-attachments')
+                        .getPublicUrl(fileName);
+                    
+                    if (elements.uploadProgress) {
+                        elements.uploadProgress.style.width = '100%';
+                        setTimeout(() => {
+                            elements.uploadProgress.style.width = '0%';
+                        }, 1000);
+                    }
+                    
+                    return {
+                        url: publicUrl,
+                        type: file.type,
+                        name: file.name
+                    };
+                    
+                } catch (error) {
+                    console.error("Erro no upload:", error);
+                    alert("Erro ao fazer upload: " + error.message);
+                    return null;
+                }
             }
-        }
-
-        // Save messages to localStorage
-        function saveMessages() {
-            localStorage.setItem('papoapp_messages', messagesArea.innerHTML);
-        }
-
-        // Save messages when new message is added
-        const originalSendMessage = sendMessage;
-        sendMessage = function() {
-            originalSendMessage();
-            saveMessages();
-        };
-
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(registration => {
-                console.log('ServiceWorker registered');
-            }).catch(err => {
-                console.log('ServiceWorker registration failed: ', err);
+            
+            // Envia mensagem para o banco
+            async function enviarMensagem(texto, attachmentData = null) {
+                try {
+                    const messageData = {
+                        message: texto,
+                        username: userName  // CORRIGIDO: user -> username
+                    };
+                    
+                    if (attachmentData) {
+                        messageData.attachment_url = attachmentData.url;
+                        messageData.attachment_type = attachmentData.type;
+                        messageData.attachment_name = attachmentData.name;
+                    }
+                    
+                    console.log("Enviando dados:", messageData);
+                    
+                    const { error } = await supabase
+                        .from("messenge")
+                        .insert([messageData]);
+                    
+                    if (error) {
+                        console.error("Erro ao enviar:", error);
+                        alert("Erro ao enviar mensagem: " + error.message);
+                        return false;
+                    }
+                    
+                    console.log("Mensagem enviada com sucesso!");
+                    return true;
+                    
+                } catch (error) {
+                    console.error("Erro:", error);
+                    alert("Erro ao enviar mensagem");
+                    return false;
+                }
+            }
+            
+            // ========== CONFIGURAÇÃO DOS EVENTOS ==========
+            
+            // Menu de configurações
+            if (elements.settingsBtn) {
+                elements.settingsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    elements.settingsMenu.classList.toggle('show');
+                });
+            }
+            
+            document.addEventListener('click', (e) => {
+                if (elements.settingsMenu && !elements.settingsMenu.contains(e.target) && 
+                    elements.settingsBtn && !elements.settingsBtn.contains(e.target)) {
+                    elements.settingsMenu.classList.remove('show');
+                }
             });
-        }
-
-        // Handle user status
-        window.addEventListener('online', () => {
-            document.getElementById('userStatus').textContent = 'online';
+            
+            // Tema
+            elements.themeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    elements.themeBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const theme = btn.getAttribute('data-theme');
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('papoapp_theme', theme);
+                });
+            });
+            
+            // Cor de fundo
+            elements.bgColorOptions.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    elements.bgColorOptions.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    const color = btn.getAttribute('data-color');
+                    elements.messagesArea.style.backgroundColor = color;
+                    elements.messagesArea.style.backgroundImage = 'none';
+                    localStorage.setItem('papoapp_bg_color', color);
+                });
+            });
+            
+            // Imagem de fundo
+            if (elements.bgImageUpload) {
+                elements.bgImageUpload.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            elements.messagesArea.style.backgroundImage = `url('${e.target.result}')`;
+                            elements.messagesArea.style.backgroundSize = 'cover';
+                            elements.messagesArea.style.backgroundPosition = 'center';
+                            localStorage.setItem('papoapp_bg_image', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Câmera
+            if (elements.cameraBtn) {
+                elements.cameraBtn.addEventListener('click', async () => {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        elements.videoElement.srcObject = stream;
+                        elements.cameraSection.classList.add('show');
+                    } catch (err) {
+                        alert('Erro ao acessar câmera: ' + err.message);
+                    }
+                });
+            }
+            
+            if (elements.closeCameraBtn) {
+                elements.closeCameraBtn.addEventListener('click', () => {
+                    if (stream) {
+                        stream.getTracks().forEach(t => t.stop());
+                        stream = null;
+                    }
+                    elements.cameraSection.classList.remove('show');
+                });
+            }
+            
+            if (elements.capturePhotoBtn) {
+                elements.capturePhotoBtn.addEventListener('click', () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = elements.videoElement.videoWidth;
+                    canvas.height = elements.videoElement.videoHeight;
+                    canvas.getContext('2d').drawImage(elements.videoElement, 0, 0);
+                    
+                    canvas.toBlob((blob) => {
+                        const file = new File([blob], `foto-${Date.now()}.jpg`, { type: 'image/jpeg' });
+                        currentAttachment = file;
+                        
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            elements.previewContent.innerHTML = `<img src="${e.target.result}" style="max-width:50px; max-height:50px;">`;
+                            elements.attachmentPreview.classList.add('show');
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    elements.closeCameraBtn.click();
+                });
+            }
+            
+            // Avatar
+            if (elements.avatarContainer) {
+                elements.avatarContainer.addEventListener('click', () => {
+                    elements.avatarUpload.click();
+                });
+            }
+            
+            if (elements.avatarUpload) {
+                elements.avatarUpload.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            elements.avatarImage.src = e.target.result;
+                            elements.avatarImage.style.display = 'block';
+                            elements.avatarText.style.display = 'none';
+                            localStorage.setItem('papoapp_avatar', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Galeria
+            if (elements.galleryBtn) {
+                elements.galleryBtn.addEventListener('click', () => {
+                    elements.galleryInput.click();
+                });
+            }
+            
+            if (elements.galleryInput) {
+                elements.galleryInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        currentAttachment = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            elements.previewContent.innerHTML = `<img src="${e.target.result}" style="max-width:50px; max-height:50px;">`;
+                            elements.attachmentPreview.classList.add('show');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Arquivo
+            if (elements.fileBtn) {
+                elements.fileBtn.addEventListener('click', () => {
+                    elements.fileInput.click();
+                });
+            }
+            
+            if (elements.fileInput) {
+                elements.fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        currentAttachment = file;
+                        elements.previewContent.innerHTML = `<span>📎 ${file.name}</span>`;
+                        elements.attachmentPreview.classList.add('show');
+                    }
+                });
+            }
+            
+            // Remover anexo
+            if (elements.removeAttachment) {
+                elements.removeAttachment.addEventListener('click', () => {
+                    currentAttachment = null;
+                    elements.attachmentPreview.classList.remove('show');
+                    elements.previewContent.innerHTML = '';
+                    if (elements.galleryInput) elements.galleryInput.value = '';
+                    if (elements.fileInput) elements.fileInput.value = '';
+                });
+            }
+            
+            // Botão enviar
+            if (elements.sendBtn) {
+                elements.sendBtn.addEventListener('click', async () => {
+                    const text = elements.messageInput.value.trim();
+                    
+                    if (text || currentAttachment) {
+                        elements.sendBtn.disabled = true;
+                        
+                        try {
+                            let attachmentData = null;
+                            
+                            if (currentAttachment) {
+                                attachmentData = await uploadFile(currentAttachment);
+                                if (!attachmentData) {
+                                    elements.sendBtn.disabled = false;
+                                    return;
+                                }
+                            }
+                            
+                            const success = await enviarMensagem(text, attachmentData);
+                            
+                            if (success) {
+                                elements.messageInput.value = '';
+                                if (elements.removeAttachment) {
+                                    elements.removeAttachment.click();
+                                }
+                            }
+                            
+                        } catch (error) {
+                            console.error("Erro:", error);
+                            alert("Erro ao enviar mensagem");
+                        } finally {
+                            elements.sendBtn.disabled = false;
+                        }
+                    }
+                });
+            }
+            
+            // Enter no input
+            if (elements.messageInput) {
+                elements.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (elements.sendBtn) {
+                            elements.sendBtn.click();
+                        }
+                    }
+                });
+            }
+            
+            // Status online/offline
+            window.addEventListener('online', () => {
+                if (elements.userStatus) elements.userStatus.textContent = 'online';
+            });
+            
+            window.addEventListener('offline', () => {
+                if (elements.userStatus) elements.userStatus.textContent = 'offline';
+            });
+            
+            // ========== REALTIME ==========
+            supabase
+                .channel('chat')
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'messenge' }, 
+                    (payload) => {
+                        console.log("📨 Nova mensagem:", payload.new);
+                        addMessageToUI(payload.new);
+                    }
+                )
+                .subscribe();
+            
+            // ========== CARREGAR CONFIGURAÇÕES SALVAS ==========
+            
+            // Tema salvo
+            const savedTheme = localStorage.getItem('papoapp_theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                elements.themeBtns.forEach(btn => {
+                    if (btn.getAttribute('data-theme') === savedTheme) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Cor de fundo salva
+            const savedColor = localStorage.getItem('papoapp_bg_color');
+            if (savedColor) {
+                elements.messagesArea.style.backgroundColor = savedColor;
+                elements.bgColorOptions.forEach(btn => {
+                    if (btn.getAttribute('data-color') === savedColor) {
+                        btn.classList.add('selected');
+                    }
+                });
+            }
+            
+            // Imagem de fundo salva
+            const savedImage = localStorage.getItem('papoapp_bg_image');
+            if (savedImage) {
+                elements.messagesArea.style.backgroundImage = `url('${savedImage}')`;
+                elements.messagesArea.style.backgroundSize = 'cover';
+                elements.messagesArea.style.backgroundPosition = 'center';
+            }
+            
+            // Avatar salvo
+            const savedAvatar = localStorage.getItem('papoapp_avatar');
+            if (savedAvatar && elements.avatarImage && elements.avatarText) {
+                elements.avatarImage.src = savedAvatar;
+                elements.avatarImage.style.display = 'block';
+                elements.avatarText.style.display = 'none';
+            }
+            
+            // ========== INICIAR ==========
+            carregarMensagens();
+            console.log(`✅ App iniciado com usuário: ${userName}`);
+        })();
+    </script>
+ 
+ <script>
+  // Registro ÚNICO e CORRETO do Service Worker
+  (function() {
+    if ('serviceWorker' in navigator) {
+      // Garante que o DOM carregou primeiro
+      window.addEventListener('load', function() {
+        console.log('📦 Tentando registrar Service Worker...');
+        
+        navigator.serviceWorker.register('/Papoapp/sw.js', { 
+          scope: '/Papoapp/' 
+        })
+        .then(function(registration) {
+          console.log('✅ Service Worker registrado!', registration.scope);
+          
+          // Verifica se há atualização
+          registration.addEventListener('updatefound', function() {
+            console.log('🔄 Nova versão do SW encontrada');
+          });
+        })
+        .catch(function(error) {
+          console.log('❌ Falha no registro:', error);
         });
         
-        window.addEventListener('offline', () => {
-            document.getElementById('userStatus').textContent = 'offline';
+        // Verifica se já tem SW ativo
+        navigator.serviceWorker.ready.then(function(registration) {
+          console.log('✅ Service Worker está ativo e pronto!');
         });
-    </script>
+      });
+    } else {
+      console.log('ℹ️ Service Worker não suportado');
+    }
+  })();
+</script>
+ 
 </body>
 </html>
